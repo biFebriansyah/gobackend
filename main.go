@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/biFebriansyah/gobackend/src/routers"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {

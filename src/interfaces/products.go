@@ -1,6 +1,9 @@
 package interfaces
 
-import "github.com/biFebriansyah/gobackend/src/database/orm/models"
+import (
+	"github.com/biFebriansyah/gobackend/src/database/orm/models"
+	"github.com/biFebriansyah/gobackend/src/libs"
+)
 
 type ProductRepo interface {
 	FindAll() (*models.Products, error)
@@ -8,6 +11,6 @@ type ProductRepo interface {
 }
 
 type ProductService interface {
-	GetAll() (*models.Products, error)
-	Add(data *models.Product) (*models.Product, error)
+	GetAll() *libs.Response
+	Add(data *models.Product) *libs.Response
 }

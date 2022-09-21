@@ -3,6 +3,7 @@ package orm
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -10,10 +11,10 @@ import (
 
 func New() (*gorm.DB, error) {
 
-	host := "localhost"
-	user := "golang"
-	password := "abcd1234"
-	dbName := "godb"
+	host := os.Getenv("DB_HOST")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASS")
+	dbName := os.Getenv("DB_NAME")
 
 	config := fmt.Sprintf("host=%s user=%s password=%s dbname=%s", host, user, password, dbName)
 

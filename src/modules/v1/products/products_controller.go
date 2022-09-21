@@ -6,6 +6,7 @@ import (
 
 	"github.com/biFebriansyah/gobackend/src/database/orm/models"
 	"github.com/biFebriansyah/gobackend/src/interfaces"
+	"github.com/biFebriansyah/gobackend/src/libs"
 )
 
 // berinterakti dengan service dan router
@@ -20,31 +21,19 @@ func NewCtrl(reps interfaces.ProductService) *prod_ctrl {
 }
 
 func (re *prod_ctrl) GetAll(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-type", "application/json")
-
-	data, err := re.svc.GetAll()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	}
-
-	json.NewEncoder(w).Encode(data)
-
+	result := re.svc.GetAll()
+	result.Send(w)
 }
 
 func (re *prod_ctrl) Add(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-type", "application/json")
 
 	var datas models.Product
 	err := json.NewDecoder(r.Body).Decode(&datas)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		libs.Respone(err, 500, true)
+		return
 	}
 
-	data, err := re.svc.Add(&datas)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	}
-
-	json.NewEncoder(w).Encode(data)
+	re.svc.Add(&datas).Send(w)
 
 }
