@@ -24,13 +24,5 @@ func New() (*gorm.DB, error) {
 		return nil, errors.New("gagal init database")
 	}
 
-	db, err := gormDb.DB()
-	if err != nil {
-		return nil, errors.New("gagal init database")
-	}
-
-	db.SetConnMaxIdleTime(10)
-	db.SetMaxOpenConns(100)
-
 	return gormDb, nil
 }

@@ -2,11 +2,11 @@ package carts
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/biFebriansyah/gobackend/src/database/orm/models"
 	"github.com/biFebriansyah/gobackend/src/interfaces"
-	"github.com/biFebriansyah/gobackend/src/libs"
 	"github.com/gorilla/mux"
 )
 
@@ -36,18 +36,21 @@ func (rep *cart_ctrl) GetByUserId(w http.ResponseWriter, r *http.Request) {
 func (rep *cart_ctrl) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 
-	var data models.Cart
-
+	var data models.CartItem
+	// claim_user := r.Context().Value("users")
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
 
 	err := dec.Decode(&data)
 	if err != nil {
-		libs.Respone(err.Error(), 400, true)
+		http.Error(w, err.Error(), http.StatusBadGateway)
 		return
 	}
 
-	result := rep.repo.Save(&data)
+	result, err := rep.repo.Add(1, &data)
+	if err != nil {
+		fmt.Fprint(w, err.Error())
+	}
 
 	result.Send(w)
 }

@@ -43,13 +43,13 @@ func (r *cart_service) Get() *help.Response {
 	return result
 }
 
-func (r *cart_service) Save(data *models.Cart) *help.Response {
+func (r cart_service) Add(usersId uint, items *models.CartItem) (*help.Response, error) {
 
-	data, err := r.re.Save(data)
+	data, err := r.re.Save(usersId, items)
 	if err != nil {
-		return help.Respone(err.Error(), 500, true)
+		return nil, err
 	}
 
 	result := help.Respone(data, 200, false)
-	return result
+	return result, nil
 }

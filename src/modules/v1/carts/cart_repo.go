@@ -39,13 +39,25 @@ func (r *cart_repo) All() (*models.Cart, error) {
 	return &cart, nil
 }
 
-func (r *cart_repo) Save(data *models.Cart) (*models.Cart, error) {
+func (r *cart_repo) Save(usersId uint, items *models.CartItem) (*models.Cart, error) {
+	tx := r.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
-	result := r.db.Create(data)
-
-	if result.Error != nil {
-		return nil, errors.New("Gagal mengambil data")
+	if err := tx.Create(items).Error; err != nil {
+		tx.Rollback()
+		return nil, err
 	}
 
-	return data, nil
+	var cart = &models.Cart{UsersId: usersId, CartId: items.CartId}
+	if err := tx.Create(cart).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	tx.Commit()
+	return cart, nil
 }
