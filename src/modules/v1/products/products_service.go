@@ -27,7 +27,13 @@ func (r *prod_service) GetAll() *libs.Response {
 }
 
 func (r *prod_service) Add(data *models.Product) *libs.Response {
-	data, err := r.repo.Save(data)
+	fileURL, err := libs.CloudUpload(data.Image)
+	if err != nil {
+		return libs.Respone(err.Error(), 500, true)
+	}
+
+	data.Image = fileURL
+	data, err = r.repo.Save(data)
 	if err != nil {
 		return libs.Respone(err.Error(), 500, true)
 	}

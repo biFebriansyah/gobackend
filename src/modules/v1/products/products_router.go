@@ -1,6 +1,7 @@
 package products
 
 import (
+	"github.com/biFebriansyah/gobackend/src/middleware"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -16,5 +17,5 @@ func New(rt *mux.Router, db *gorm.DB) {
 	ctrl := NewCtrl(svc)
 
 	route.HandleFunc("/", ctrl.GetAll).Methods("GET")
-	route.HandleFunc("/", ctrl.Add).Methods("POST")
+	route.HandleFunc("/", middleware.Handle(ctrl.Add, middleware.AuthWithRole("users"), middleware.FileUpload)).Methods("POST")
 }

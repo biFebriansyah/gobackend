@@ -31,3 +31,49 @@ func CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }
+
+func AuthWithRole(role ...string) Middleware {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-type", "application/json")
+
+			var header string
+			var valid bool = false
+
+			if header = r.Header.Get("Authorization"); header == "" {
+				libs.Respone("header not provide", 401, false).Send(w)
+				return
+			}
+
+			if !strings.Contains(header, "Bearer") {
+				libs.Respone("invalid header type", 401, false).Send(w)
+				return
+			}
+
+			token := strings.Replace(header, "Bearer ", "", -1)
+
+			checkTokens, err := libs.CheckToken(token)
+			if err != nil {
+				libs.Respone(err.Error(), 201, true).Send(w)
+				return
+			}
+
+			for _, rl := range role {
+				if rl == checkTokens.Role {
+					valid = true
+				}
+			}
+
+			if !valid {
+				libs.Respone("you not have permission to accsess", 401, false).Send(w)
+				return
+			}
+
+			// share context to controller
+			ctx := context.WithValue(r.Context(), "username", checkTokens.Username)
+
+			// Serve the next handler
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
