@@ -21,7 +21,8 @@ func NewCtrl(rep interfaces.CartService) *cart_ctrl {
 func (rep *cart_ctrl) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 
-	result := rep.repo.Get()
+	usersId := r.Context().Value("user")
+	result := rep.repo.GetByUserId(usersId.(string))
 	result.Send(w)
 }
 
@@ -37,7 +38,8 @@ func (rep *cart_ctrl) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 
 	var data models.CartItem
-	// claim_user := r.Context().Value("users")
+	usersId := r.Context().Value("user")
+
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
 
@@ -47,7 +49,7 @@ func (rep *cart_ctrl) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := rep.repo.Add(1, &data)
+	result, err := rep.repo.Add(usersId.(string), &data)
 	if err != nil {
 		fmt.Fprint(w, err.Error())
 	}

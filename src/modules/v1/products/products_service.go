@@ -17,6 +17,15 @@ func NewService(reps interfaces.ProductRepo) *prod_service {
 	return &prod_service{reps}
 }
 
+func (r *prod_service) GetProdWithId(uid uint) *libs.Response {
+	data, err := r.repo.GetById(uid)
+	if err != nil {
+		return libs.Respone(err.Error(), 500, true)
+	}
+
+	return libs.Respone(data, 200, false)
+}
+
 func (r *prod_service) GetAll() *libs.Response {
 	data, err := r.repo.FindAll()
 	if err != nil {

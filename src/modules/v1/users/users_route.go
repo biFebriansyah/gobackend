@@ -13,6 +13,6 @@ func New(rt *mux.Router, db *gorm.DB) {
 	svc := NewService(repo)
 	ctrl := NewCtrl(svc)
 
-	route.HandleFunc("", middleware.CheckAuth(ctrl.GetAll)).Methods("GET")
+	route.HandleFunc("", middleware.Handle(ctrl.GetAll, middleware.AuthWithRole("users"))).Methods("GET")
 	route.HandleFunc("", ctrl.Add).Methods("POST")
 }

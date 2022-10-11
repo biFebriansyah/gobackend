@@ -18,9 +18,9 @@ func NewCtrl(reps interfaces.UsersService) *users_ctrl {
 }
 
 func (re *users_ctrl) GetAll(w http.ResponseWriter, r *http.Request) {
-	claims_users := r.Context().Value("username")
+	claims_users := r.Context().Value("user")
 
-	result := re.svc.FindByUsername(claims_users.(string))
+	result := re.svc.GetByUUID(claims_users.(string))
 	result.Send(w)
 }
 

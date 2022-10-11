@@ -6,13 +6,13 @@ import (
 )
 
 type CartRepo interface {
-	FindByUserId(id int) (*models.Cart, error)
+	FindByUserId(id string) (*models.Cart, error)
 	All() (*models.Cart, error)
-	Save(usersId uint, items *models.CartItem) (*models.Cart, error)
+	Save(usersId string, items *models.CartItem) (*models.Cart, error)
 }
 
 type CartService interface {
 	Get() *help.Response
 	GetByUserId(id string) *help.Response
-	Add(usersId uint, items *models.CartItem) (*help.Response, error)
+	Add(usersId string, items *models.CartItem) (*help.Response, error)
 }

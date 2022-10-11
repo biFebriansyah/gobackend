@@ -16,6 +16,7 @@ func New(rt *mux.Router, db *gorm.DB) {
 	svc := NewService(repo)
 	ctrl := NewCtrl(svc)
 
-	route.HandleFunc("/", ctrl.GetAll).Methods("GET")
-	route.HandleFunc("/", middleware.Handle(ctrl.Add, middleware.AuthWithRole("users"), middleware.FileUpload)).Methods("POST")
+	route.HandleFunc("", ctrl.GetAll).Methods("GET")
+	route.HandleFunc("/{id}", ctrl.GetByid).Methods("GET")
+	route.HandleFunc("", middleware.Handle(ctrl.Add, middleware.FileUpload)).Methods("POST")
 }

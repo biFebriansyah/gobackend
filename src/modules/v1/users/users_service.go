@@ -25,6 +25,16 @@ func (r user_service) FindAll() *libs.Response {
 
 }
 
+func (r user_service) GetByUUID(uid string) *libs.Response {
+
+	data, err := r.repo.FindById(uid)
+	if err != nil {
+		return libs.Respone(err.Error(), 400, true)
+	}
+
+	return libs.Respone(data, 200, false)
+}
+
 func (r user_service) FindByUsername(username string) *libs.Response {
 
 	data, err := r.repo.FindByUsername(username)

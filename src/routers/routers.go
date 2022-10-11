@@ -5,6 +5,7 @@ import (
 
 	"github.com/biFebriansyah/gobackend/src/database/orm"
 	"github.com/biFebriansyah/gobackend/src/modules/v1/auth"
+	"github.com/biFebriansyah/gobackend/src/modules/v1/carts"
 	"github.com/biFebriansyah/gobackend/src/modules/v1/products"
 	"github.com/biFebriansyah/gobackend/src/modules/v1/users"
 	"github.com/gorilla/mux"
@@ -21,6 +22,7 @@ func New() (*mux.Router, error) {
 
 	products.New(mainRoute, db)
 	users.New(mainRoute, db)
+	carts.New(mainRoute, db)
 	auth.New(mainRoute, db)
 
 	return mainRoute, nil

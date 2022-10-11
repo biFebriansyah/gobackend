@@ -1,8 +1,6 @@
 package carts
 
 import (
-	"strconv"
-
 	"github.com/biFebriansyah/gobackend/src/database/orm/models"
 	"github.com/biFebriansyah/gobackend/src/interfaces"
 	help "github.com/biFebriansyah/gobackend/src/libs"
@@ -18,12 +16,7 @@ func NewService(rep interfaces.CartRepo) *cart_service {
 
 func (r *cart_service) GetByUserId(id string) *help.Response {
 
-	userId, err := strconv.Atoi(id)
-	if err != nil {
-		return help.Respone(err.Error(), 500, true)
-	}
-
-	data, err := r.re.FindByUserId(userId)
+	data, err := r.re.FindByUserId(id)
 	if err != nil {
 		return help.Respone(err.Error(), 500, true)
 	}
@@ -43,7 +36,7 @@ func (r *cart_service) Get() *help.Response {
 	return result
 }
 
-func (r cart_service) Add(usersId uint, items *models.CartItem) (*help.Response, error) {
+func (r cart_service) Add(usersId string, items *models.CartItem) (*help.Response, error) {
 
 	data, err := r.re.Save(usersId, items)
 	if err != nil {

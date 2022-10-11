@@ -27,6 +27,18 @@ func (r *users_repo) FindAll() (*models.Users, error) {
 	return &data, nil
 }
 
+func (r *users_repo) FindById(uid string) (*models.User, error) {
+	var data models.User
+
+	result := r.db.First(&data, "user_id = ?", uid)
+
+	if result.Error != nil {
+		return nil, errors.New("Gagal mengambil data")
+	}
+
+	return &data, nil
+}
+
 func (r *users_repo) FindByUsername(username string) (*models.User, error) {
 	var data models.User
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 )
@@ -44,7 +43,6 @@ func FileUpload(next http.HandlerFunc) http.HandlerFunc {
 			}
 		}
 
-		log.Println("Upload Middleware Pass")
 		// share context to controller
 		ctx := context.WithValue(r.Context(), "file", pathfile)
 

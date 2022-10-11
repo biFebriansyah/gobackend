@@ -26,7 +26,7 @@ func CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "username", checkTokens.Username)
+		ctx := context.WithValue(r.Context(), "user", checkTokens.User_id)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
@@ -70,7 +70,7 @@ func AuthWithRole(role ...string) Middleware {
 			}
 
 			// share context to controller
-			ctx := context.WithValue(r.Context(), "username", checkTokens.Username)
+			ctx := context.WithValue(r.Context(), "user", checkTokens.User_id)
 
 			// Serve the next handler
 			next.ServeHTTP(w, r.WithContext(ctx))
