@@ -40,7 +40,7 @@ func server(cmd *cobra.Command, args []string) error {
 
 		var addrs string = "0.0.0.0:8080"
 
-		if pr := os.Getenv("APP_PORT"); pr != "" {
+		if pr := os.Getenv("PORT"); pr != "" {
 			addrs = "0.0.0.0:" + pr
 		}
 
