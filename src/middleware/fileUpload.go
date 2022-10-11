@@ -32,7 +32,7 @@ func FileUpload(next http.HandlerFunc) http.HandlerFunc {
 					fmt.Fprint(w, err.Error())
 				}
 
-				pathfile = "./upload/images/" + hdr.Filename
+				pathfile = "/tmp/" + hdr.Filename
 				outfile, err := os.Create(pathfile)
 				if err != nil {
 					fmt.Fprint(w, err.Error())
