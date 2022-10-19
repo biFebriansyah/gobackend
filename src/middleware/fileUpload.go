@@ -1,0 +1,52 @@
+package middleware
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+)
+
+func FileUpload(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-type", "application/json")
+
+		var pathfile string
+
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if err := r.ParseMultipartForm(32 << 20); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		for _, fheaders := range r.MultipartForm.File {
+			for _, hdr := range fheaders {
+				infile, err := hdr.Open()
+				if err != nil {
+					fmt.Fprint(w, err.Error())
+				}
+
+				pathfile = "/tmp/" + hdr.Filename
+				outfile, err := os.Create(pathfile)
+				if err != nil {
+					fmt.Fprint(w, err.Error())
+				}
+
+				defer outfile.Close()
+				io.Copy(outfile, infile)
+			}
+		}
+
+		// share context to controller
+		ctx := context.WithValue(r.Context(), "file", pathfile)
+
+		// Serve the next handler
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}

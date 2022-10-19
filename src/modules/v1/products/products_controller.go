@@ -1,11 +1,14 @@
 package products
 
 import (
-	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/biFebriansyah/gobackend/src/database/orm/models"
 	"github.com/biFebriansyah/gobackend/src/interfaces"
+	"github.com/biFebriansyah/gobackend/src/libs"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 )
 
 // berinterakti dengan service dan router
@@ -19,32 +22,42 @@ func NewCtrl(reps interfaces.ProductService) *prod_ctrl {
 	return &prod_ctrl{svc: reps}
 }
 
+func (re *prod_ctrl) GetByid(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)["id"]
+	prod_id, _ := strconv.ParseUint(vars, 10, 32)
+
+	result := re.svc.GetProdWithId(uint(prod_id))
+	result.Send(w)
+}
+
 func (re *prod_ctrl) GetAll(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-type", "application/json")
-
-	data, err := re.svc.GetAll()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	}
-
-	json.NewEncoder(w).Encode(data)
-
+	result := re.svc.GetAll()
+	result.Send(w)
 }
 
 func (re *prod_ctrl) Add(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-type", "application/json")
 
 	var datas models.Product
-	err := json.NewDecoder(r.Body).Decode(&datas)
+	var decoder = schema.NewDecoder()
+
+	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		libs.Respone(err, 500, true)
+		return
 	}
 
-	data, err := re.svc.Add(&datas)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	uploads := r.Context().Value("file")
+	if uploads != nil {
+		datas.Image = uploads.(string)
 	}
 
-	json.NewEncoder(w).Encode(data)
+	err = decoder.Decode(&datas, r.PostForm)
+	if err != nil {
+		libs.Respone(err, 500, true)
+		return
+	}
+
+	re.svc.Add(&datas).Send(w)
 
 }
